@@ -1,7 +1,7 @@
 // API service to handle all API calls
 
 // Base URL from environment variables
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
 
 // Types
 export interface Quote {
@@ -67,8 +67,10 @@ export const apiService = {
 
   /**
    * Submit a new rating
+   * TODO:
+   *  async submitRating(rating: number): Promise<RatingData> {
    */
-  async submitRating(rating: number): Promise<RatingData> {
+  async submitRating(): Promise<RatingData> {
     try {
       // In a real app, this would be an actual API call
       // const response = await fetch(`${API_URL}/ratings`, {

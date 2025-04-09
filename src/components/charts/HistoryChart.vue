@@ -37,6 +37,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 const props = defineProps<{
   hasVoted: boolean;
 }>();
+console.log(props.hasVoted);
 
 // Time period options
 const timePeriods = [
@@ -59,6 +60,7 @@ const selectTimePeriod = (period: string) => {
 
 // Fetch historical data based on time period
 const fetchHistoricalData = async (period: string) => {
+  // TODO: Replace with actual API call
   // This is mock data for demonstration
   const mockData = generateMockData(period);
   historicalData.value = mockData;
@@ -209,6 +211,7 @@ onMounted(() => {
 
 .chart-wrapper {
   position: relative;
+  height: 300px;
   width: 100%;
 }
 
