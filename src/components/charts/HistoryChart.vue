@@ -211,7 +211,6 @@ onMounted(() => {
 
 .chart-wrapper {
   position: relative;
-  height: 300px;
   width: 100%;
 }
 
