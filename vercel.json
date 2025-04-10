@@ -1,4 +1,5 @@
 {
+  "version":2,
   "functions": {
     "api/*.js": {
       "runtime": "@vercel/node@2.15.3"
@@ -10,7 +11,7 @@
   "builds": [
     {
       "src": "api/**/*.js",
-      "use": "@vercel/node@18.x"
+      "use": "@vercel/node"
     }
   ]
 }
