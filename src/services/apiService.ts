@@ -1,7 +1,7 @@
 // API service to handle all API calls
 
 // Base URL from environment variables
-// const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 // Types
 export interface Quote {
@@ -27,70 +27,59 @@ export const apiService = {
    */
   async getQuoteOfTheDay(): Promise<Quote> {
     try {
-      // In a real app, this would be an actual API call
-      // const response = await fetch(`${API_URL}/quotes/today`);
-      // if (!response.ok) throw new Error('Failed to fetch quote');
-      // return await response.json();
-      
-      // Mock data for development
+      const response = await fetch(`${API_URL}/quotes/today`);
+      if (!response.ok) throw new Error('Failed to fetch quote');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching quote of the day:', error);
+      // Fallback to mock data if API is unavailable
       return {
         id: 1,
         text: "I have not personally committed violence, nor have I ever advocated that others engage in violence, yet the left has firebombed and shot bullets into my stores and many have advocated for my death.\n\nThey are guilty of that which they accuse me.",
         date: new Date().toISOString().split('T')[0]
       };
-    } catch (error) {
-      console.error('Error fetching quote of the day:', error);
-      throw error;
     }
   },
 
   /**
    * Get current rating statistics
    */
-  async getCurrentRating(): Promise<RatingData> {
+  async getCurrentRating(timeRange: string = '30'): Promise<RatingData> {
     try {
-      // In a real app, this would be an actual API call
-      // const response = await fetch(`${API_URL}/ratings/current`);
-      // if (!response.ok) throw new Error('Failed to fetch current rating');
-      // return await response.json();
-      
-      // Mock data for development
-      return {
-        averageRating: 5.0,
-        totalVotes: 10
-      };
+      const response = await fetch(`${API_URL}/ratings/current?timeRange=${timeRange}`);
+      if (!response.ok) throw new Error('Failed to fetch current rating');
+      return await response.json();
     } catch (error) {
       console.error('Error fetching current rating:', error);
-      throw error;
+      // Fallback to mock data if API is unavailable
+      return {
+        averageRating: 5.0,
+        totalVotes: 0
+      };
     }
   },
 
   /**
    * Submit a new rating
-   * TODO:
-   *  async submitRating(rating: number): Promise<RatingData> {
    */
-  async submitRating(): Promise<RatingData> {
+  async submitRating(rating: number): Promise<RatingData> {
     try {
-      // In a real app, this would be an actual API call
-      // const response = await fetch(`${API_URL}/ratings`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify({ rating })
-      // });
-      // if (!response.ok) throw new Error('Failed to submit rating');
-      // return await response.json();
-      
-      // Mock response for development
-      return {
-        averageRating: 5.2,
-        totalVotes: 11
-      };
+      const response = await fetch(`${API_URL}/ratings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ rating })
+      });
+      if (!response.ok) throw new Error('Failed to submit rating');
+      return await response.json();
     } catch (error) {
       console.error('Error submitting rating:', error);
-      throw error;
+      // Fallback if API is unavailable
+      return {
+        averageRating: rating, // Just return the submitted rating
+        totalVotes: 1
+      };
     }
   },
 
@@ -99,12 +88,13 @@ export const apiService = {
    */
   async getHistoricalRatings(period: string): Promise<HistoricalRating[]> {
     try {
-      // In a real app, this would be an actual API call
-      // const response = await fetch(`${API_URL}/ratings/history?period=${period}`);
-      // if (!response.ok) throw new Error('Failed to fetch historical ratings');
-      // return await response.json();
+      const response = await fetch(`${API_URL}/ratings/history?period=${period}`);
+      if (!response.ok) throw new Error('Failed to fetch historical ratings');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching historical ratings:', error);
       
-      // Mock data for development
+      // Fallback to mock data for development
       const data: HistoricalRating[] = [];
       let days = 30;
       
@@ -140,9 +130,6 @@ export const apiService = {
       }
       
       return data;
-    } catch (error) {
-      console.error('Error fetching historical ratings:', error);
-      throw error;
     }
   }
 };

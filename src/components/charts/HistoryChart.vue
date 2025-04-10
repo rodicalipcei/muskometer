@@ -26,9 +26,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watchEffect } from 'vue';
 import { Line as LineChart } from 'vue-chartjs';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import apiService from '@/services/apiService';
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -37,7 +38,6 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 const props = defineProps<{
   hasVoted: boolean;
 }>();
-console.log(props.hasVoted);
 
 // Time period options
 const timePeriods = [
@@ -51,61 +51,28 @@ const timePeriods = [
 // State
 const selectedPeriod = ref('1month');
 const historicalData = ref<{ date: string; rating: number }[]>([]);
+const isLoading = ref(false);
 
 // Select time period
-const selectTimePeriod = (period: string) => {
+const selectTimePeriod = async (period: string) => {
   selectedPeriod.value = period;
-  fetchHistoricalData(period);
+  await fetchHistoricalData(period);
 };
 
 // Fetch historical data based on time period
 const fetchHistoricalData = async (period: string) => {
-  // TODO: Replace with actual API call
-  // This is mock data for demonstration
-  const mockData = generateMockData(period);
-  historicalData.value = mockData;
-};
-
-// Generate mock data for demonstration
-const generateMockData = (period: string) => {
-  const data = [];
-  let days = 30;
-  
-  switch (period) {
-    case '3months':
-      days = 90;
-      break;
-    case '6months':
-      days = 180;
-      break;
-    case '1year':
-      days = 365;
-      break;
-    case 'all':
-      days = 730; // ~2 years
-      break;
+  isLoading.value = true;
+  try {
+    // Get data from API
+    const data = await apiService.getHistoricalRatings(period);
+    historicalData.value = data;
+  } catch (error) {
+    console.error('Error fetching historical data:', error);
+    // Fallback to empty data
+    historicalData.value = [];
+  } finally {
+    isLoading.value = false;
   }
-  
-  // Reduce the number of data points to avoid overcrowding
-  const interval = period === '1month' ? 3 : (period === '3months' ? 7 : 14);
-  
-  const today = new Date();
-  for (let i = days; i >= 0; i -= interval) {
-    const date = new Date(today);
-    date.setDate(today.getDate() - i);
-    
-    // Generate slightly random ratings that hover around 5
-    const baseRating = 5;
-    const randomVariation = Math.random() * 1.5 - 0.75; // Less variation for cleaner chart
-    const rating = Math.max(0, Math.min(10, baseRating + randomVariation));
-    
-    data.push({
-      date: date.toISOString().split('T')[0],
-      rating: parseFloat(rating.toFixed(1))
-    });
-  }
-  
-  return data;
 };
 
 // Computed properties for the chart
@@ -185,9 +152,18 @@ const chartOptions = computed(() => {
   };
 });
 
-// Fetch initial data on component mount
+// Watch for changes to hasVoted
+watchEffect(() => {
+  if (props.hasVoted) {
+    fetchHistoricalData(selectedPeriod.value);
+  }
+});
+
+// Fetch initial data when component mounts
 onMounted(() => {
-  fetchHistoricalData(selectedPeriod.value);
+  if (props.hasVoted) {
+    fetchHistoricalData(selectedPeriod.value);
+  }
 });
 </script>
 
@@ -212,6 +188,7 @@ onMounted(() => {
 .chart-wrapper {
   position: relative;
   width: 100%;
+  height: 100%;
 }
 
 .chart-controls {
