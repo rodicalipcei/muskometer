@@ -1,8 +1,11 @@
 // API service to handle all API calls
 
-// Base URL from environment variables
-//const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+// Base URL and endpoints from environment variables
 const API_URL = import.meta.env.VITE_API_URL || '/api';
+const QUOTES_TODAY = import.meta.env.VITE_QUOTES_TODAY_ENDPOINT || 'quotes/today';
+const RATINGS_CURRENT = import.meta.env.VITE_RATINGS_CURRENT_ENDPOINT || 'ratings/current';
+const RATINGS_HISTORY = import.meta.env.VITE_RATINGS_HISTORY_ENDPOINT || 'ratings/history';
+const RATINGS = import.meta.env.VITE_RATINGS_ENDPOINT || 'ratings';
 
 // Types
 export interface Quote {
@@ -28,7 +31,7 @@ export const apiService = {
    */
   async getQuoteOfTheDay(): Promise<Quote> {
     try {
-      const response = await fetch(`${API_URL}/quotes/today`);
+      const response = await fetch(`${API_URL}/${QUOTES_TODAY}`);
       if (!response.ok) throw new Error('Failed to fetch quote');
       return await response.json();
     } catch (error) {
@@ -47,7 +50,7 @@ export const apiService = {
    */
   async getCurrentRating(timeRange: string = '30'): Promise<RatingData> {
     try {
-      const response = await fetch(`${API_URL}/ratings/current?timeRange=${timeRange}`);
+      const response = await fetch(`${API_URL}/${RATINGS_CURRENT}?timeRange=${timeRange}`);
       if (!response.ok) throw new Error('Failed to fetch current rating');
       return await response.json();
     } catch (error) {
@@ -65,7 +68,7 @@ export const apiService = {
    */
   async submitRating(rating: number): Promise<RatingData> {
     try {
-      const response = await fetch(`${API_URL}/ratings`, {
+      const response = await fetch(`${API_URL}/${RATINGS}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -89,7 +92,7 @@ export const apiService = {
    */
   async getHistoricalRatings(period: string): Promise<HistoricalRating[]> {
     try {
-      const response = await fetch(`${API_URL}/ratings/history?period=${period}`);
+      const response = await fetch(`${API_URL}/${RATINGS_HISTORY}?period=${period}`);
       if (!response.ok) throw new Error('Failed to fetch historical ratings');
       return await response.json();
     } catch (error) {

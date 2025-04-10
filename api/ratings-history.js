@@ -1,10 +1,10 @@
-const { MongoClient } = require('mongodb');
+import { MongoClient } from 'mongodb';
 
 // MongoDB connection string - store this in Vercel environment variables
 const uri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB_NAME || 'muskometer';
 
-module.exports = async (req, res) => {
+export default async function handler (req, res) {
   // Handle CORS for local development
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
