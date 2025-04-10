@@ -2,8 +2,8 @@
   <div class="app-container">
     <header>
       <nav>
-        <RouterLink to="/">Home</RouterLink> | 
-        <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/" active-class="active-link">Home</RouterLink> | 
+        <RouterLink to="/about" active-class="active-link">About</RouterLink>
       </nav>
     </header>
     <main>
@@ -14,8 +14,8 @@
     <footer>
       <p>© {{ currentYear }} Muskometer App</p>
       <div class="contact-links">
-        <a href="mailto:contact@muskometer.com">contact@muskometer.com</a>
-        <a href="https://twitter.com/muskometer">@muskometer</a>
+        <a href="mailto:luncaapei@gmail.com">luncaapei@gmail.com</a>
+        <a href="https://x.com/HFMMHO">@HFMMHO</a>
       </div>
     </footer>
   </div>
@@ -42,9 +42,22 @@ header {
 }
 
 nav a {
-  color: var(--primary-color);
+  color: var(--text-gray);
   text-decoration: none;
   margin: 0 0.5rem;
+  transition: color 0.3s ease;
+}
+
+nav a:hover {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+/* Style for active navigation link */
+.active-link {
+  color: var(--primary-color) !important;
+  font-weight: bold;
+  border-bottom: 2px solid var(--primary-color);
 }
 
 main {

@@ -39,7 +39,7 @@
           fill="var(--primary-color)"
         />
         
-        <!-- Rating labels and Elon faces -->
+        <!-- Rating labels and emoji faces -->
         <g v-for="position in positions" :key="position.value">
           <circle
             :cx="position.x"
@@ -57,7 +57,7 @@
             font-size="10"
             fill="white"
           >
-            😐
+            {{ getFaceForRating(position.value) }}
           </text>
         </g>
         
@@ -73,7 +73,6 @@
       
       <div class="gauge-stats">
         <p>Average: {{ averageRating.toFixed(1) }}</p>
-        <p>{{ totalVotes }} votes</p>
       </div>
     </div>
   </div>
@@ -120,13 +119,11 @@ const pointerEndY = computed(() => {
   return 100 - 65 * Math.sin(angle);
 });
 
-// Calculate positions for the rating markers (0, 2.5, 5, 7.5, 10)
+// Calculate positions for the rating markers (0, 5, 10)
 const positions = computed(() => {
   const positions = [];
   
-  for (let i = 0; i <= 10; i += 2.5) {
-    if (i === 2.5 || i === 7.5) continue; // Skip middle positions
-    
+  for (let i = 0; i <= 10; i += 5) {
     const angle = (i / 10) * Math.PI;
     positions.push({
       value: i,
@@ -137,6 +134,17 @@ const positions = computed(() => {
   
   return positions;
 });
+
+// Function to return the appropriate face emoji based on rating value
+const getFaceForRating = (rating: number): string => {
+  if (rating <= 3) {
+    return '😞'; // Sad face for low ratings
+  } else if (rating <= 7) {
+    return '😐'; // Neutral face for middle ratings
+  } else {
+    return '😊'; // Happy face for high ratings
+  }
+};
 </script>
 
 <style scoped>
@@ -172,7 +180,7 @@ const positions = computed(() => {
 .gauge-stats {
   margin-top: 1rem;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
 }
 
 .gauge-stats p {

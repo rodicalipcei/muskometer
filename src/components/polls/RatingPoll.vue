@@ -22,6 +22,10 @@
     >
       {{ isSubmitting ? 'SUBMITTING...' : 'SUBMIT VOTE' }}
     </button>
+    
+    <p v-if="totalVotes > 0" class="vote-stats">
+      {{ totalVotes }} votes, last 30 days
+    </p>
   </div>
 </template>
 
@@ -30,6 +34,11 @@ import { ref, onMounted } from 'vue';
 
 const currentRating = ref(5);
 const isSubmitting = ref(false);
+
+// Add prop for total votes
+const props = defineProps<{
+  totalVotes: number;
+}>();
 
 onMounted(() => {
   // Force a re-render to ensure the slider position matches the value
@@ -144,5 +153,12 @@ const emit = defineEmits<{
 .submit-button:disabled {
   background-color: #9b3462;
   cursor: not-allowed;
+}
+
+/* Style for the vote stats */
+.vote-stats {
+  margin-top: 1rem;
+  color: var(--text-gray);
+  font-size: 0.9rem;
 }
 </style>

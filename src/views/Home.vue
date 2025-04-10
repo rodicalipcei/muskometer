@@ -1,6 +1,9 @@
 <template>
   <div class="home-container">
-    <RatingPoll @rating-submitted="handleRatingSubmitted" />
+    <RatingPoll 
+      @rating-submitted="handleRatingSubmitted" 
+      :total-votes="totalVotes"
+    />
     
     <RatingGauge 
       :average-rating="averageRating" 
@@ -8,7 +11,7 @@
       :has-voted="hasVoted"
     />
 
-    <HistoryChart :has-voted="hasVoted" />
+    <!-- <HistoryChart :has-voted="hasVoted" /> -->
     
     <QuoteCard :quote="quoteOfTheDay" />
   
@@ -20,7 +23,7 @@ import { ref, onMounted } from 'vue';
 import RatingPoll from '@/components/polls/RatingPoll.vue';
 import RatingGauge from '@/components/polls/RatingGauge.vue';
 import QuoteCard from '@/components/quotes/QuoteCard.vue';
-import HistoryChart from '@/components/charts/HistoryChart.vue';
+// import HistoryChart from '@/components/charts/HistoryChart.vue';
 
 // State
 const hasVoted = ref(false);
@@ -52,6 +55,10 @@ onMounted(async () => {
     // TODO: Replace with real API calls
     // Fetch quote of the day, average rating, and total votes
     console.log('Fetching initial data...');
+    
+    // For demo purposes, set some initial values
+    averageRating.value = 5.0;
+    totalVotes.value = 10;
     
     // Check if user has already voted today (could be stored in localStorage)
     const storedVote = localStorage.getItem('muskometer_voted_today');
