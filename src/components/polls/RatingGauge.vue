@@ -1,5 +1,5 @@
 <template>
-  <div class="card gauge-container" v-if="hasVoted">
+  <div class="card gauge-container">
     <h2>Muskometer</h2>
     <p class="subtitle">The Ultimate Elon Musk Opinion Poll</p>
     
@@ -153,6 +153,9 @@ const getFaceForRating = (rating: number): string => {
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 100%; /* Full height to match history chart */
+  display: flex;
+  flex-direction: column;
 }
 
 .gauge-container {
@@ -170,6 +173,10 @@ const getFaceForRating = (rating: number): string => {
   margin: 1rem auto;
   width: 100%;
   max-width: 300px;
+  flex: 1; /* Take up available space */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .gauge-svg {

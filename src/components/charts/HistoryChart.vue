@@ -1,5 +1,5 @@
 <template>
-  <div class="card chart-card" v-if="hasVoted">
+  <div class="card chart-card">
     <h2>Historical Ratings</h2>
     
     <div class="chart-container">

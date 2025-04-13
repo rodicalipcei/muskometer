@@ -3,15 +3,18 @@
     <RatingPoll 
       @rating-submitted="handleRatingSubmitted" 
       :total-votes="totalVotes"
-    />
-    
-    <RatingGauge 
-      :average-rating="averageRating" 
-      :total-votes="totalVotes"
       :has-voted="hasVoted"
     />
+    
+    <div v-if="hasVoted" class="results-section">
+      <RatingGauge 
+        :average-rating="averageRating" 
+        :total-votes="totalVotes"
+        :has-voted="hasVoted"
+      />
 
-    <HistoryChart :has-voted="hasVoted" />
+      <HistoryChart :has-voted="hasVoted" />
+    </div>
     
     <QuoteCard :quote="quoteOfTheDay" />
   
@@ -53,10 +56,8 @@ const handleRatingSubmitted = async (rating: number) => {
     // Mark as voted
     hasVoted.value = true;
     
-    // Store vote in localStorage to remember the user has voted
-    localStorage.setItem('muskometer_voted_today', 'true');
-    localStorage.setItem('muskometer_last_vote_date', new Date().toISOString().split('T')[0]);
-    
+    // Store vote in sessionStorage to remember the user has voted for this session
+    sessionStorage.setItem('muskometer_voted', 'true');
   } catch (error) {
     console.error('Error submitting rating:', error);
     
@@ -65,15 +66,17 @@ const handleRatingSubmitted = async (rating: number) => {
     totalVotes.value += 1;
     averageRating.value = (oldTotal + rating) / totalVotes.value;
     hasVoted.value = true;
+    
+    // Store vote in sessionStorage even if API fails
+    sessionStorage.setItem('muskometer_voted', 'true');
   }
 };
 
-// Check if user has already voted today
+// Check if user has already voted in this session
 const checkIfVoted = () => {
-  const lastVoteDate = localStorage.getItem('muskometer_last_vote_date');
-  const today = new Date().toISOString().split('T')[0];
+  const hasVotedInSession = sessionStorage.getItem('muskometer_voted');
   
-  if (lastVoteDate === today) {
+  if (hasVotedInSession === 'true') {
     hasVoted.value = true;
   }
 };
@@ -87,6 +90,7 @@ onMounted(async () => {
     // Fetch quote of the day
     const quote = await apiService.getQuoteOfTheDay();
     quoteOfTheDay.value = quote;
+    console.log("Quote fetched:", quote);
     
     // Fetch current rating stats
     const stats = await apiService.getCurrentRating();
@@ -106,8 +110,24 @@ onMounted(async () => {
   gap: 1.5rem;
 }
 
+.results-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @media (max-width: 768px) {
   .home-container {
+    gap: 1rem;
+  }
+  
+  .results-section {
     gap: 1rem;
   }
 }
